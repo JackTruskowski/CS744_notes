@@ -1,0 +1,36 @@
+#+LATEX_HEADER:\usepackage{amsmath}
+#+LATEX_HEADER:\usepackage{amssymb}
+
+#+TITLE: CS744: Big Data Systems
+#+AUTHOR: Jack Truskowski
+#+STARTUP: showall
+
+* 2/4/19 MapReduce
+- Programming model
+- Execution
+- Runtime issues
+- M-R library handles execution and run-time issues
+  - Transparent to programmers
+
+file:diagrams/masterworker.png
+
+** Operators
+1) Map
+   - Input = (key,value) --> (key, <v>)
+2) Reduce
+   - Operates share a key
+   - (key,value) is sorted and values passed to reducer
+
+** Failures and Slowdowns
+- Handled by the master
+*** Possible failures
+1) Map / Reduce
+   - Worker fails, some maps and some reduces completed
+   - Reduce data is already written to HDFS, doesn't need to be recomputed
+   - Maps must be re-executed to recover intermediate data, since it hasn't been written to HDFS 
+
+
+
+
+
+   
