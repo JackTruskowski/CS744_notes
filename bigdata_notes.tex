@@ -1,4 +1,4 @@
-% Created 2019-02-04 Mon 14:03
+% Created 2019-02-06 Wed 13:51
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -18,10 +18,10 @@
 \usepackage{amssymb}
 \author{Jack Truskowski}
 \date{\today}
-\title{CS744: Big Data Systems}
+\title{CS744: Big Data Systems Notes}
 \hypersetup{
  pdfauthor={Jack Truskowski},
- pdftitle={CS744: Big Data Systems},
+ pdftitle={CS744: Big Data Systems Notes},
  pdfkeywords={},
  pdfsubject={},
  pdfcreator={Emacs 25.2.2 (Org mode 8.3.5)}, 
@@ -32,7 +32,7 @@
 \tableofcontents
 
 
-\section{2/4/19 MapReduce}
+\section{2.4.19 MapReduce}
 \label{sec:orgheadline4}
 \begin{itemize}
 \item Programming model
@@ -72,7 +72,64 @@
 \begin{itemize}
 \item Worker fails, some maps and some reduces completed
 \item Reduce data is already written to HDFS, doesn't need to be recomputed
-\item Maps must be re-executed, since it hasn't been written to HDFS
+\item Maps must be re-executed to recover intermediate data, since it hasn't been written to HDFS
 \end{itemize}
+\end{enumerate}
+
+
+\section{2.6.19 Spark}
+\label{sec:orgheadline8}
+\begin{itemize}
+\item Programming model
+\end{itemize}
+
+\subsection{RDDs}
+\label{sec:orgheadline5}
+\begin{itemize}
+\item Partitioned collection of records
+\item SQL, D-Streams, Graphx
+\item Intermediate data stored in memory
+\item Low overhead fault tolerance achieved through lineage
+\end{itemize}
+
+\subsection{Benefits}
+\label{sec:orgheadline6}
+\begin{enumerate}
+\item Speed up iterative computations
+\item Load datasets into memory
+\begin{itemize}
+\item can't be done in MapReduce
+\end{itemize}
+
+\item Higher level programs
+\end{enumerate}
+
+\begin{verbatim}
+RDD -> transformations -> action
+\end{verbatim}
+
+\begin{itemize}
+\item \texttt{Persist} (deserialized, serialized, on-disk)
+\begin{itemize}
+\item RDDs only exist logically unless \texttt{persist} is called
+\begin{itemize}
+\item Only then materialized (unless wide dependencies)
+
+\includegraphics[width=.9\linewidth]{diagrams/widedep.png}
+\end{itemize}
+
+\item \texttt{REL} (reliable flag): checkpoint to disk or other memory locations
+\end{itemize}
+\item Partitioning
+\item Lazy computation
+\end{itemize}
+
+\subsection{Example: PageRank}
+\label{sec:orgheadline7}
+
+\begin{enumerate}
+\item Gather
+\item Applies
+\item Scatter
 \end{enumerate}
 \end{document}

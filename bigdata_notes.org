@@ -1,11 +1,11 @@
 #+LATEX_HEADER:\usepackage{amsmath}
 #+LATEX_HEADER:\usepackage{amssymb}
 
-#+TITLE: CS744: Big Data Systems
+#+TITLE: CS744: Big Data Systems Notes
 #+AUTHOR: Jack Truskowski
 #+STARTUP: showall
 
-* 2/4/19 MapReduce
+* 2.4.19 MapReduce
 - Programming model
 - Execution
 - Runtime issues
@@ -30,7 +30,38 @@ file:diagrams/masterworker.png
    - Maps must be re-executed to recover intermediate data, since it hasn't been written to HDFS 
 
 
+* 2.6.19 Spark
+- Programming model
 
-
-
+** RDDs
+- Partitioned collection of records
+- SQL, D-Streams, Graphx
+- Intermediate data stored in memory
+- Low overhead fault tolerance achieved through lineage
    
+** Benefits
+1. Speed up iterative computations
+2. Load datasets into memory
+   - can't be done in MapReduce
+
+- Higher level programs
+
+\begin{verbatim}
+RDD -> transformations -> action
+\end{verbatim}
+
+- \texttt{Persist} (deserialized, serialized, on-disk)
+  - RDDs only exist logically unless \texttt{persist} is called
+    - Only then materialized (unless wide dependencies)
+
+      file:diagrams/widedep.png
+
+  - \texttt{REL} (reliable flag): checkpoint to disk or other memory locations
+- Partitioning
+- Lazy computation
+
+** Example: PageRank
+- General process:
+  1. Gather
+  2. Applies
+  3. Scatter
