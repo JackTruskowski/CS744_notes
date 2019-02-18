@@ -5,7 +5,7 @@
 #+AUTHOR: Jack Truskowski
 #+STARTUP: showall
 
-* 2.4.19 MapReduce
+* MapReduce (2.4.19)
 - Programming model
 - Execution
 - Runtime issues
@@ -29,8 +29,7 @@ file:diagrams/masterworker.png
    - Reduce data is already written to HDFS, doesn't need to be recomputed
    - Maps must be re-executed to recover intermediate data, since it hasn't been written to HDFS 
 
-
-* 2.6.19 Spark
+* Spark (2.6.19)
 - Programming model
 
 ** RDDs
@@ -46,7 +45,7 @@ file:diagrams/masterworker.png
 
 - Higher level programs
 
-\begin{verbatim}
+\Begin{Verbatim}
 RDD -> transformations -> action
 \end{verbatim}
 
@@ -65,3 +64,98 @@ RDD -> transformations -> action
   1. Gather
   2. Applies
   3. Scatter
+
+* Spark + Job Manager (2.8.19)
+
+** Job Manager
+- Scheduling: resources, ready, location
+  1. How important is the task? (critical path) -> modeling, use some tasks to estimate others
+ 
+** Stragglers
+1. Rate of progress -> progress report
+   - Compare report with model
+   - 50% slower -> this task is a straggler
+   - Detect and react to stragglers early
+     - No early detection of stragglers in \texttt{MapReduce}
+2. Worthwhile to react to stragglers?
+   - Does cloning lower overall resource use? 
+
+* Cluster Schedulers -- Mechanism (2.11.19)
+
+** Mechanisms
+- YARN: one-level resource allocator
+- Mesos: two-level pessimistic scheduler
+- Omega/Borg: optimistic scheduler
+  
+- Fair allocation - delay scheduling
+
+** YARN
+- Statistical-multiplexing
+  - Work-conserving allocation discipline
+    - No resources go to waste
+- \textit{Node Manager (NM)}: local available resources
+- \textit{Resource Manager (RM)}: global state
+- \textit{Application Master (AM)}: requesting for resources
+- De-coupled from programming model
+  - Gang scheduling, Message Passing Interface (MPI)
+    - Revoking vs. admission control
+- Late binding (kill-and-restart, e.g.)
+
+** Mesos
+- Two-level scheduler
+- Resource offers
+  - Slaves report what resources are available
+  - Mesos offers these resources to individual tasks
+    - Frameworks can accept or deny offers (maybe they are not data-local)
+- May kill tasks that run for too long to allow better sharing of resources
+
+*** Weaknesses
+- Applications cannot request specific resources, must wait until they get offered what they want
+
+* Omega Scheduler (2.13.19)
+- HFS (delay scheduling)
+- DRF: instantaneous fairness
+
+  1. all-or-nothing
+  2. priority
+
+** Dominant Resource Fairness
+1. Slots -> rigid
+2. Tasks are uniform
+3. Equal number of slots is fair
+* (2.18.19)
+- Resource variabilities (Clarenet, QOOP) | Batch analytics
+- WAN bandwidth -> *Geo distributed analytics*
+- Compute resources:
+  - Spot market
+  - Small clusters
+
+** Geo Distributed Analytics
+*** Constraints
+  - Bandwidth varies over links (logical link)
+  - Control Plane
+    - Scheduler
+    - Job Manager
+    - Parameter server
+    - Partitioning/replication/coordination of the above
+  - Latency
+    - Staleness
+    - Heartbeats
+  - Legal & Privacy Issues
+    - Multi-party computation
+
+*** Clarinet
+- Mutually-trusting data centers
+- Batch computation -- multiple queries
+- Ignores legal & privacy issues
+- Ignores partitioning scheduler or job manager
+
+**** Big ideas
+1. Query plans in a network-aware manner
+   \begin{verbatim}Query => Query Optimizer (n/w aware) => Scheduler =>\end{verbatim}
+   - Placement of tasks
+   - Scheduling, or "when"
+2. QP placement and scheduling
+3. Joint QP selection
+
+

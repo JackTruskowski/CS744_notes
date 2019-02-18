@@ -1,4 +1,4 @@
-% Created 2019-02-06 Wed 13:51
+% Created 2019-02-18 Mon 13:33
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -32,7 +32,7 @@
 \tableofcontents
 
 
-\section{2.4.19 MapReduce}
+\section{MapReduce (2.4.19)}
 \label{sec:orgheadline4}
 \begin{itemize}
 \item Programming model
@@ -76,8 +76,7 @@
 \end{itemize}
 \end{enumerate}
 
-
-\section{2.6.19 Spark}
+\section{Spark (2.6.19)}
 \label{sec:orgheadline8}
 \begin{itemize}
 \item Programming model
@@ -104,7 +103,7 @@
 \item Higher level programs
 \end{enumerate}
 
-\begin{verbatim}
+\Begin{Verbatim}
 RDD -> transformations -> action
 \end{verbatim}
 
@@ -126,10 +125,175 @@ RDD -> transformations -> action
 
 \subsection{Example: PageRank}
 \label{sec:orgheadline7}
-
+\begin{itemize}
+\item General process:
 \begin{enumerate}
 \item Gather
 \item Applies
 \item Scatter
+\end{enumerate}
+\end{itemize}
+
+\section{Spark + Job Manager (2.8.19)}
+\label{sec:orgheadline11}
+
+\subsection{Job Manager}
+\label{sec:orgheadline9}
+\begin{itemize}
+\item Scheduling: resources, ready, location
+\begin{enumerate}
+\item How important is the task? (critical path) -> modeling, use some tasks to estimate others
+\end{enumerate}
+\end{itemize}
+
+\subsection{Stragglers}
+\label{sec:orgheadline10}
+\begin{enumerate}
+\item Rate of progress -> progress report
+\begin{itemize}
+\item Compare report with model
+\item 50\% slower -> this task is a straggler
+\item Detect and react to stragglers early
+\begin{itemize}
+\item No early detection of stragglers in \texttt{MapReduce}
+\end{itemize}
+\end{itemize}
+\item Worthwhile to react to stragglers?
+\begin{itemize}
+\item Does cloning lower overall resource use?
+\end{itemize}
+\end{enumerate}
+
+\section{Cluster Schedulers -- Mechanism (2.11.19)}
+\label{sec:orgheadline16}
+
+\subsection{Mechanisms}
+\label{sec:orgheadline12}
+\begin{itemize}
+\item YARN: one-level resource allocator
+\item Mesos: two-level pessimistic scheduler
+\item Omega/Borg: optimistic scheduler
+
+\item Fair allocation - delay scheduling
+\end{itemize}
+
+\subsection{YARN}
+\label{sec:orgheadline13}
+\begin{itemize}
+\item Statistical-multiplexing
+\begin{itemize}
+\item Work-conserving allocation discipline
+\begin{itemize}
+\item No resources go to waste
+\end{itemize}
+\end{itemize}
+\item \textit{Node Manager (NM)}: local available resources
+\item \textit{Resource Manager (RM)}: global state
+\item \textit{Application Master (AM)}: requesting for resources
+\item De-coupled from programming model
+\begin{itemize}
+\item Gang scheduling, Message Passing Interface (MPI)
+\begin{itemize}
+\item Revoking vs. admission control
+\end{itemize}
+\end{itemize}
+\item Late binding (kill-and-restart, e.g.)
+\end{itemize}
+
+\subsection{Mesos}
+\label{sec:orgheadline15}
+\begin{itemize}
+\item Two-level scheduler
+\item Resource offers
+\begin{itemize}
+\item Slaves report what resources are available
+\item Mesos offers these resources to individual tasks
+\begin{itemize}
+\item Frameworks can accept or deny offers (maybe they are not data-local)
+\end{itemize}
+\end{itemize}
+\item May kill tasks that run for too long to allow better sharing of resources
+\end{itemize}
+
+\subsubsection{Weaknesses}
+\label{sec:orgheadline14}
+\begin{itemize}
+\item Applications cannot request specific resources, must wait until they get offered what they want
+\end{itemize}
+
+\section{Omega Scheduler (2.13.19)}
+\label{sec:orgheadline18}
+\begin{itemize}
+\item HFS (delay scheduling)
+\item DRF: instantaneous fairness
+
+\begin{enumerate}
+\item all-or-nothing
+\item priority
+\end{enumerate}
+\end{itemize}
+
+\subsection{Dominant Resource Fairness}
+\label{sec:orgheadline17}
+\begin{enumerate}
+\item Slots -> rigid
+\item Tasks are uniform
+\item Equal number of slots is fair
+\end{enumerate}
+\section{(2.18.19)}
+\label{sec:orgheadline23}
+\begin{itemize}
+\item Resource variabilities (Clarenet, QOOP) | Batch analytics
+\item WAN bandwidth -> \textbf{Geo distributed analytics}
+\item Compute resources:
+\begin{itemize}
+\item Spot market
+\item Small clusters
+\end{itemize}
+\end{itemize}
+
+\subsection{Geo Distributed Analytics}
+\label{sec:orgheadline22}
+\subsubsection{Constraints}
+\label{sec:orgheadline19}
+\begin{itemize}
+\item Bandwidth varies over links (logical link)
+\item Control Plane
+\begin{itemize}
+\item Scheduler
+\item Job Manager
+\item Parameter server
+\item Partitioning/replication/coordination of the above
+\end{itemize}
+\item Latency
+\begin{itemize}
+\item Staleness
+\item Heartbeats
+\end{itemize}
+\item Legal \& Privacy Issues
+\begin{itemize}
+\item Multi-party computation
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Clarinet}
+\label{sec:orgheadline21}
+\begin{itemize}
+\item Mutually-trusting data centers
+\item Batch computation -- multiple queries
+\item Ignores legal \& privacy issues
+\item Ignores partitioning scheduler or job manager
+\end{itemize}
+\begin{enumerate}
+\item Big ideas
+\label{sec:orgheadline20}
+\begin{enumerate}
+\item Query plans in a network-aware manner
+\begin{verbatim}Query => Query Optimizer (n/w aware) => Scheduler =>\end{verbatim}
+\begin{itemize}
+\item Placement of tasks
+\item Scheduling, or "when"
+\end{itemize}
+\end{enumerate}
 \end{enumerate}
 \end{document}
